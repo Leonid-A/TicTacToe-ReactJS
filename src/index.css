@@ -14,8 +14,8 @@ h1{
 }
 
 .game-block{
-    width: 300px;
-    height: 300px;
+    /* width: 300px;
+    height: 300px; */
     display:flex;
     flex-wrap: wrap;
     cursor: pointer;
@@ -24,13 +24,12 @@ h1{
 
 .item{
     background-color:white;
-    width: 100px;
-    height: 100px;
+    width: 50px;
+    height: 50px;
     border:1px solid black;
-    display:flex;
     justify-content: center;
     align-items: center;
-    font-size: 80px;
+    font-size: 40px;
     color:black;
 }
 

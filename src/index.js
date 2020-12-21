@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import {checkWinner} from "./checkWin.js"
+
 
 function Square(props){
     return (
@@ -11,29 +13,39 @@ function Square(props){
 }
 
 class Board extends React.Component{
+    n = 5;
+    squares = [];
+    fillInfo = () => {
+        for (let b = 0; b < this.n; b++) {
+            for (let a=0; a< this.n; a++){
+                const square = {x: a, y: b, value: null}
+                this.squares.push(square)
+            };
+        }
+    };
 
     constructor(props){
         super(props);
+        this.fillInfo();
         this.state = {
-            squares: Array(9).fill({x: null, y: null, value: null }),
+            squares: this.squares.slice(),
             xIsNext: true,
             status: null
         };
     } 
-
-    handleClick(i,x,y){
+    
+    handleClick(i){
         if (this.state.squares[i].value || this.state.status){
             return;
         }
 
         const squares = this.state.squares.slice();
         squares[i]= {
-            x,
-            y,
+            x: this.state.squares[i].x,
+            y: this.state.squares[i].y,
             value: this.state.xIsNext ? "X" : "O"
         };
-        const winner = checkWinner(i, squares)
-
+        const winner = checkWinner(i, squares, this.n)
         this.setState({
             squares,
             xIsNext: !this.state.xIsNext,
@@ -42,36 +54,33 @@ class Board extends React.Component{
     }
 
     resetGame(){
-        this.setState({
-            squares: Array(9).fill({x: null, y: null, value: null }),
+        this.setState( {
+            squares: this.squares,
             xIsNext: true,
             status: null
-        })
+        });
     }
 
-    renderSquare(i, x, y){
+    renderSquare(i){
         return <Square 
-                    data-x={x}
-                    data-y={y}
+                    key = {i}
+                    data-x={this.state.squares[i].x}
+                    data-y={this.state.squares[i].y}
                     value={this.state.squares[i].value} 
-                    onClick={() => this.handleClick(i,x,y)}
+                    onClick={() => this.handleClick(i)}
                 />
     }
 
     render(){
+        const style = {
+            width: (50 * this.n) + "px",
+            height: (50 * this.n) + "px",
+        }
         return(
             <>
                 <h1>Tic Tac Toe Game</h1>
-                <div className="game-block">
-                    {this.renderSquare(0,0,0)}
-                    {this.renderSquare(1,1,0)}
-                    {this.renderSquare(2,2,0)}
-                    {this.renderSquare(3,0,1)}
-                    {this.renderSquare(4,1,1)}
-                    {this.renderSquare(5,2,1)}
-                    {this.renderSquare(6,0,2)}
-                    {this.renderSquare(7,1,2)}
-                    {this.renderSquare(8,2,2)}
+                <div style = {style} className="game-block">
+                    {this.state.squares.map((item, index) => this.renderSquare(index))}
                 </div>
                 <div className="center">
                     <button id="reset" onClick={() => this.resetGame()}>RESET</button>
@@ -80,49 +89,6 @@ class Board extends React.Component{
             </>
         )
     }
-}
-
-function checkWinner(i, squares){
-    const {value, x, y} = squares[i];
-    const length = squares.length;
-    let hor = 1;
-    let vert = 1;
-    let diagR = 1;
-    let diagL = 1;
-    let winner = null;
-    const winCount = 3;
-    let clickCount = 0;
-    
-    for (let j = 0; j < length; j++){
-        const current = squares[j];
-        if (current.value){
-            clickCount++;
-        }
-
-        if ( j === i || current.value !== value){
-            continue;
-        }
-
-        if (current.x === x){
-            vert++;
-        }
-        if (current.y === y){
-            hor++;
-        }
-        if (current.x === current.y && x === y){
-            diagL++;
-        }
-        if (current.x + current.y === 2 && x + y === 2){
-            diagL++;
-        }
-    }
-
-    if ( vert === winCount || hor === winCount || diagL === winCount || diagR === winCount){
-        winner = value;
-    } else if (clickCount === 9){
-        winner = "No one"
-    }
-    return winner;
 }
 
 ReactDOM.render(
