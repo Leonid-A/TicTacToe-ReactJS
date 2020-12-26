@@ -1,92 +1,74 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import checkWinner from "../helpers/checkWinner";
 import Square from "./Square";
+import Button from "./Button/Button";
 
-class Board extends React.Component{
+function Board(props) {
+  const fillInfo = () => {
+    const squares = [];
+    const { value } = props;
 
-    fillInfo = () => {
-        const squares = [];
-        const { value } = this.props;
+    for (let b = 0; b < value; b++) {
+      for (let a = 0; a < value; a++) {
+        squares.push({ x: a, y: b, value: null });
+      }
+    }
+    return squares;
+  };
 
-        for (let b = 0; b < value; b++) {
-            for (let a=0; a< value; a++){
-                squares.push({x: a, y: b, value: null})
-            };
-        }
-        return squares;
-    };
+  const renderSquare = (i) => {
+    return (
+      <Square key={i} value={squares[i].value} onClick={() => handleClick(i)} />
+    );
+  };
 
-    constructor(props){
-        super(props);
-
-        this.state = {
-            squares: this.fillInfo().slice(),
-            xIsNext: true,
-            status: null
-        };
-    } 
-    
-    handleClick(i){
-        if (this.state.squares[i].value || this.state.status){
-            return;
-        }
-
-        const squares = this.state.squares.slice();
-        squares[i]= {
-            x: this.state.squares[i].x,
-            y: this.state.squares[i].y,
-            value: this.state.xIsNext ? "X" : "O"
-        };
-        const winner = checkWinner(i, squares, this.props.value)
-        this.setState({
-            squares,
-            xIsNext: !this.state.xIsNext,
-            status: winner ? 'Winner is:' + winner : null
-        });
+  const handleClick = (i) => {
+    if (squares[i].value || status.status) {
+      return;
     }
 
-    resetGame(){
-        this.setState( {
-            squares: this.fillInfo().slice(),
-            xIsNext: true,
-            status: null
-        });
-    }
+    squares[i].value = status.xIsNext ? "X" : "O";
+    const winner = checkWinner(i, squares, props.value);
+    setSquares(squares);
+    setStatus({
+      status: winner ? "Winner is:" + winner : null,
+      xIsNext: !status.xIsNext,
+    });
+  };
 
-    renderSquare(i){
-        return <Square 
-                    key = {i}
-                    value={this.state.squares[i].value} 
-                    onClick={() => this.handleClick(i)}
-                />
-    }
+  const resetGame = () => {
+    setSquares(fillInfo());
+    setStatus({
+      status: null,
+      xIsNext: true,
+    });
+  };
 
-    componentDidUpdate(prevProps) {
-        if (this.props.value !== prevProps.value) {
-        this.setState({
-                squares: this.fillInfo().slice()
-            }) 
-        }
-    }
+  useEffect(() => {
+    setSquares(fillInfo());
+  }, [props.value]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    render(){
-        const style = {
-            width: (50 * this.props.value) + "px",
-            height: (50 * this.props.value) + "px",
-        }
+  const [squares, setSquares] = useState(fillInfo());
+  const [status, setStatus] = useState({
+    xIsNext: true,
+    status: null,
+  });
 
-        return(
-            <>
-                <div style = {style} className="game-block">
-                    {this.state.squares.map((item, index) => this.renderSquare(index))}
-                </div>
-                <div className="center">
-                    <button id="reset" onClick={() => this.resetGame()}>RESET</button>
-                    <p id="info">{this.state.status} </p>
-                </div>
-            </>
-        )
-    }
+  const style = {
+    width: 50 * props.value + "px",
+    height: 50 * props.value + "px",
+  };
+  return (
+    <>
+      <div style={style} className="game-block">
+        {squares.map((item, index) => renderSquare(index))}
+      </div>
+      <div className="center">
+        <Button class="green" clicked={resetGame} text="RESET" />
+        <p id="info">{status.status} </p>
+      </div>
+    </>
+  );
 }
 
 export default Board;

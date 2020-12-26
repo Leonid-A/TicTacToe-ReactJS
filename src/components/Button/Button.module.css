@@ -1,0 +1,21 @@
+.btn {
+  cursor: pointer;
+  color: rgb(84, 84, 84);
+  outline: none;
+}
+
+.green {
+  font-size: 16px;
+  background-color: yellowgreen;
+  padding: 16px 32px;
+  border-radius: 10px;
+}
+
+.red {
+  font-size: 14px;
+  background-color: red;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: bolder;
+  margin-left: 5px;
+}

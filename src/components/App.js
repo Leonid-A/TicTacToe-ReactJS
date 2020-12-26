@@ -1,36 +1,23 @@
-import React from "react";
+import { useRef, useState } from "react";
 import Board from "./Board";
+import Button from "./Button/Button";
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: "",
-    };
-    this.inputValue = 0;
-  }
-
-  handleChange = (event) => {
-    this.inputValue = event.target.value;
+function App() {
+  const handleSubmit = () => {
+    setValue(inputEl.current.valueAsNumber);
   };
+  const inputEl = useRef(null);
+  const [value, setValue] = useState(0);
 
-  handleSubmit = () => {
-    this.setState({
-      value: parseInt(this.inputValue),
-    });
-  };
-
-  render() {
-    return (
-      <>
-        <h1>Tic Tac Toe Game</h1>
-        <h3>Please enter number higher or equal 3 </h3>
-        <input type="number" onChange={this.handleChange} />
-        <button onClick={this.handleSubmit}>Submit</button>
-        {this.state.value > 2 ? <Board value={this.state.value} /> : null}
-      </>
-    );
-  }
+  return (
+    <>
+      <h1>Tic Tac Toe Game</h1>
+      <h3>Please enter number higher or equal 3 </h3>
+      <input type="number" ref={inputEl} />
+      <Button class="red" clicked={handleSubmit} text="Submit" />
+      {value > 2 ? <Board value={value} /> : null}
+    </>
+  );
 }
 
 export default App;
