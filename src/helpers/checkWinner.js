@@ -1,4 +1,4 @@
-export function checkWinner(i, squares, n){
+function checkWinner(i, squares, n) {
     const {value, x, y} = squares[i];
     const length = squares.length;
     let hor = 1;
@@ -40,3 +40,5 @@ export function checkWinner(i, squares, n){
     }
     return winner;
 }
+
+export default checkWinner;
